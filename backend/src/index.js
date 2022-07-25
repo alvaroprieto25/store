@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
@@ -10,7 +11,7 @@ require('./database');
 // Settings
 app.use(cors());
 app.use(express.json());
-app.set('port',3000);
+app.set('port', process.env.PORT);
 app.use(require('./routes/index'))
 
 
@@ -18,6 +19,3 @@ app.use(require('./routes/index'))
 app.listen(app.get('port'), () => {
     console.log('Server on port', app.get('port'));
 });
-
-
-//TODO: Enviroment Variables

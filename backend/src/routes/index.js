@@ -38,7 +38,15 @@ router.get('/product', async (req, res) => {
 })
 
 router.post('/product', async (req, res) => {
-    res.status(200).send('API works')
+  const { title, description, code, category, price, images } = req.body;
+  // Comprobations
+  try{
+    const product = new Product({ title, description, code, category, price, images });
+    await product.save();
+    res.status(200).json({"status": 200});
+  } catch(err) {
+    res.status(500).send(err.message);
+  }
 })
 
 router.put('/product', async (req, res) => {
