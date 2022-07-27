@@ -6,8 +6,8 @@ const newSchema = new Schema({
     description: {type: String, require: true},
     code: {type: String, require: true},
     category: {type: String, require: true},
-    Images: [{type: String}]
+    images: [{ data: Buffer, contentType: String }]
 })
 
 // Model
-module.exports = model('New', newSchema);
+module.exports = model('Product', newSchema);

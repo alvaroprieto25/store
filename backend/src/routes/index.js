@@ -29,31 +29,41 @@ router.get('/products', async (req, res) => {
     }
   });
 
-router.get('/products', async (req, res) => {
+router.get('/products', (req, res) => {
     res.status(200).send('API works')
 })
 
-router.get('/product', async (req, res) => {
+router.get('/product', (req, res) => {
     res.status(200).send('API works')
 })
 
-router.post('/product', async (req, res) => {
-  const { title, description, code, category, price, images } = req.body;
-  // Comprobations
+router.post('/product', (req, res) => {
   try{
-    const product = new Product({ title, description, code, category, price, images });
-    await product.save();
-    res.status(200).json({"status": 200});
+    const { name, description, code, category, price, images } = req.body;
+    const product = new Product({ name, description, code, category, price, images });
+
+    // TODO: save images
+
+    product.save((err, doc) => {
+      if (!err){
+          res.status(200).send('Product added succesfully!');
+      }
+      else{
+          res.status(404).send('Error during record insertion : ' + err);
+          console.log('Error during record insertion : ' + err);
+      }
+    });
   } catch(err) {
     res.status(500).send(err.message);
   }
+
 })
 
-router.put('/product', async (req, res) => {
+router.put('/product', (req, res) => {
     res.status(200).send('API works')
 })
 
-router.delete('/product', async (req, res) => {
+router.delete('/product', (req, res) => {
     res.status(200).send('API works')
 })
 
