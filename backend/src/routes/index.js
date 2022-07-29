@@ -29,12 +29,16 @@ router.get('/products', async (req, res) => {
     }
   });
 
-router.get('/products', (req, res) => {
-    res.status(200).send('API works')
-})
-
-router.get('/product', (req, res) => {
-    res.status(200).send('API works')
+router.get('/product/:id', (req, res) => {
+  try{
+    Product.findById(req.params.id).then(function(){
+      res.status(200).send(archivated);
+    }).catch(function(err){
+      res.status(404).send('Error during record insertion : ' + err);
+    });
+  } catch(err) {
+    res.status(500).send(err.message);
+  }
 })
 
 router.post('/product', (req, res) => {
@@ -59,12 +63,44 @@ router.post('/product', (req, res) => {
 
 })
 
-router.put('/product', (req, res) => {
-    res.status(200).send('API works')
+router.put('/product/:id', (req, res) => {
+  try{
+    const product = Product.findById(req.params.id);
+    const { name, description, code, category, price, images } = req.body;
+    const newProduct = new Product({ name, description, code, category, price, images });
+
+    product = newProduct;
+
+    product.save((err, doc) => {
+      if (!err){
+          res.status(200).send('Product added succesfully!');
+      }
+      else{
+          res.status(404).send('Error during record insertion : ' + err);
+          console.log('Error during record insertion : ' + err);
+      }
+    });
+
+  } catch(err) {
+    res.status(500).send(err.message);
+  }
 })
 
-router.delete('/product', (req, res) => {
-    res.status(200).send('API works')
+router.delete('/product/:id', (req, res) => {
+  try{
+    const product = Product.findById(req.params.id);
+
+    // TODO: save images
+
+    Product.deleteOne(product).then(function(){
+      res.status(200).send('Deleted product!');
+    }).catch(function(err){
+        res.status(404).send('Error during record insertion : ' + err);
+    })
+
+  } catch(err) {
+    res.status(500).send(err.message);
+  }
 })
 
 
