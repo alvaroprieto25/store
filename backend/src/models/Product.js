@@ -6,7 +6,7 @@ const newSchema = new Schema({
     description: {type: String, require: true},
     code: {type: String, require: true},
     category: {type: String, require: true},
-    images: [{ data: Buffer, contentType: String }]
+    images: { type: String }
 })
 
 // Model
