@@ -1,7 +1,17 @@
 const { Router } = require('express');
 const Product = require('../models/Product');
-
+const path = require('path');
+const multer = require('multer');
 const router = Router();
+
+const storage = multer.diskStorage({
+  destination: path.join(__dirname, '../uploads'),
+  filename: (req, file, cb) => {
+    cb(null, file.originalname)
+  }
+})
+
+const upload = multer({ storage, dest: path.join(__dirname, '../uploads') })
 
 // Get products with pagination
 router.get('/products', async (req, res) => {
@@ -41,13 +51,24 @@ router.get('/product/:id', (req, res) => {
   }
 })
 
-router.post('/product', (req, res) => {
+router.post('/product', upload.single('image'), (req, res) => {
   try{
-    const { name, description, code, category, price, images } = req.body;
-    const product = new Product({ name, description, code, category, price, images });
+    const { name, description, code, category, price } = req.body;
+    let image;
+    // Multer
+    if(req.file){
+      const file = req.file;
+      image = 'uploads/' + file.filename;
+    }
+    else{
+      image = '';
+    } 
+    
 
-    // TODO: save images
+    // Create product
+    const product = new Product({ name, description, code, category, price, image });
 
+    // Insert to DB
     product.save((err, doc) => {
       if (!err){
           res.status(200).send('Product added succesfully!');
@@ -63,14 +84,28 @@ router.post('/product', (req, res) => {
 
 })
 
-router.put('/product/:id', (req, res) => {
+router.put('/product/:id', upload.single('image'), (req, res) => {
   try{
     const product = Product.findById(req.params.id);
-    const { name, description, code, category, price, images } = req.body;
-    const newProduct = new Product({ name, description, code, category, price, images });
+    const { name, description, code, category, price } = req.body;
 
+    // Multer
+    let image;
+    if(req.file){
+      const file = req.file;
+      image = 'uploads/' + file.filename;
+    }
+    else{
+      image = '';
+    } 
+
+    // Create new product
+    const newProduct = new Product({ name, description, code, category, price, image });
+
+    // Update product
     product = newProduct;
 
+    //Save to DB
     product.save((err, doc) => {
       if (!err){
           res.status(200).send('Product added succesfully!');
@@ -89,8 +124,6 @@ router.put('/product/:id', (req, res) => {
 router.delete('/product/:id', (req, res) => {
   try{
     const product = Product.findById(req.params.id);
-
-    // TODO: save images
 
     Product.deleteOne(product).then(function(){
       res.status(200).send('Deleted product!');
