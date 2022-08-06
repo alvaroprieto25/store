@@ -1,9 +1,6 @@
-# Basic Store
+# WEB STORE
 
-## Backend
+### NEW RELEASES
 
-* Node.js
-
-## Frontend
-
-* Angular
+* CRUD product
+* Paginated get of products
